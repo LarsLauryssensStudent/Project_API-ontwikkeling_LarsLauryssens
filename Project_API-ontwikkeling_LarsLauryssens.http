@@ -1,0 +1,6 @@
+@Project_API_ontwikkeling_LarsLauryssens_HostAddress = http://localhost:5029
+
+GET {{Project_API_ontwikkeling_LarsLauryssens_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
