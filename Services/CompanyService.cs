@@ -1,18 +1,29 @@
-﻿using Project_API_ontwikkeling_LarsLauryssens.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using Project_API_ontwikkeling_LarsLauryssens.Data;
+using Project_API_ontwikkeling_LarsLauryssens.Models;
 
 namespace Project_API_ontwikkeling_LarsLauryssens.Services
 {
     public class CompanyService : ICompanyService
     {
-        private readonly data
-        public Task<List<Company>> GetAllCompanies()
+        private readonly ProjectDbContext _data;
+
+        public CompanyService(ProjectDbContext data)
         {
-            throw new NotImplementedException();
+            _data = data;
+        }
+        public async Task<List<Company>> GetAllCompanies()
+        {
+            var companies = await _data.Companies.ToListAsync();
+            return companies;
         }
 
-        public Task<Company> GetCompanyById(int id)
+        public async Task<Company> GetCompanyById(int id)
         {
-            throw new NotImplementedException();
+            var company = await _data.Companies.FirstOrDefaultAsync(x => x.Id == id);
+            
+            return company;
         }
     }
 }
