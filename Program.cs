@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Project_API_ontwikkeling_LarsLauryssens.Data;
 using Project_API_ontwikkeling_LarsLauryssens.Services;
+using System.Globalization;
+
 
 namespace Project_API_ontwikkeling_LarsLauryssens
 {
@@ -10,12 +12,22 @@ namespace Project_API_ontwikkeling_LarsLauryssens
     {
         public static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "false");
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             var builder = WebApplication.CreateBuilder(args);
-           
+            
+
+
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
-            
+
+            // Set the default culture to InvariantCulture to avoid culture-related issues
            
+
+
+
 
             //kijken welke db er actief staat in de appsettings
             var activeDatabase = builder.Configuration.GetValue<string>("ActiveDatabase");
@@ -27,8 +39,18 @@ namespace Project_API_ontwikkeling_LarsLauryssens
                 var mySqlConnectionString = builder.Configuration.GetSection("Databases:MySql:ConnectionStrings:MySqlConnection").Value;
 
                 // Configureer MySQL database
+                //builder.Services.AddDbContext<ProjectDbContext>(options =>
+                //    options.UseMySql(mySqlConnectionString, ServerVersion.AutoDetect(mySqlConnectionString)));
+            }
+            else if (activeDatabase == "SQLserver")
+            {
+                //terug connectie ophalen
+                var sqlConnectionString = builder.Configuration.GetSection("Databases:SQLserver:ConnectionStrings:SqlServerConnection").Value;
+
+                //en dan terug configureren
                 builder.Services.AddDbContext<ProjectDbContext>(options =>
-                    options.UseMySql(mySqlConnectionString, ServerVersion.AutoDetect(mySqlConnectionString)));
+                    options.UseSqlServer(sqlConnectionString));
+
             }
             //als ik gene actieve db meegeef dan wordt het automatisch inmemory
             else

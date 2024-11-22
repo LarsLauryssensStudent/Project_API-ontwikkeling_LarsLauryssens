@@ -7,9 +7,9 @@ namespace Project_API_ontwikkeling_LarsLauryssens.Data
 {
     public class ProjectDbContext : DbContext
     {
-        public ProjectDbContext(DbContextOptions<ProjectDbContext> options) : base(options) 
+        public ProjectDbContext(DbContextOptions<ProjectDbContext> options) : base(options)
         {
-        
+
         }
 
         public DbSet<Company> Companies { get; set; }
@@ -37,10 +37,10 @@ namespace Project_API_ontwikkeling_LarsLauryssens.Data
                 new Stock { Id = 4, Name = "TSLA", CompanyId = 4 },
                 new Stock { Id = 5, Name = "AMZN", CompanyId = 5 },
                 new Stock { Id = 6, Name = "FB", CompanyId = 6 },
-                new Stock { Id = 7, Name = "NFLX", CompanyId = 6 },
-                new Stock { Id = 8, Name = "NVDA", CompanyId = 7 },
-                new Stock { Id = 9, Name = "ADBE", CompanyId = 2 }
+                new Stock { Id = 7, Name = "NVDA", CompanyId = 7 },
+                new Stock { Id = 8, Name = "CRM", CompanyId = 8 }
             );
+
 
             modelBuilder.Entity<Industry>().HasData(
                 new Industry { Id = 1, Name = "Technology" },
@@ -49,6 +49,22 @@ namespace Project_API_ontwikkeling_LarsLauryssens.Data
                 new Industry { Id = 4, Name = "E-Commerce" },
                 new Industry { Id = 5, Name = "Social Media" }
             );
+
+             // one op one relatie
+            modelBuilder.Entity<Stock>()
+                .HasOne<Company>(s => s.Company)
+                .WithOne(c => c.Stock)
+                .HasForeignKey<Stock>(s => s.CompanyId)
+                .IsRequired(false) // relatie optioneel voor het toevoegen van initiele data
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // One-to-Many: Industry to Company
+           modelBuilder.Entity<Company>()
+                .HasOne(c => c.Industry)
+                .WithMany(i => i.Companies)
+                .HasForeignKey(c => c.IndustryId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+
         }
     }
 }
